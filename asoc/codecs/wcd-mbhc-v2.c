@@ -654,6 +654,7 @@ void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 			}
 			mbhc->hph_status &= ~(SND_JACK_HEADSET |
 						SND_JACK_LINEOUT |
+						SND_JACK_ANC_HEADPHONE |
 						SND_JACK_UNSUPPORTED);
 		}
 
@@ -671,9 +672,8 @@ void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 			mbhc->jiffies_atreport = jiffies;
 		} else if (jack_type == SND_JACK_LINEOUT) {
 			mbhc->current_plug = MBHC_PLUG_TYPE_HIGH_HPH;
-		} else {
-			pr_debug("%s: invalid Jack type %d\n",__func__, jack_type);
-		}
+		} else if (jack_type == SND_JACK_ANC_HEADPHONE)
+			mbhc->current_plug = MBHC_PLUG_TYPE_ANC_HEADPHONE;
 
 		if (mbhc->mbhc_cb->hph_pa_on_status)
 			is_pa_on = mbhc->mbhc_cb->hph_pa_on_status(component);
@@ -826,6 +826,8 @@ void wcd_mbhc_find_plug_and_report(struct wcd_mbhc *mbhc,
 			anc_mic_found =
 			mbhc->mbhc_fn->wcd_mbhc_detect_anc_plug_type(mbhc);
 		jack_type = SND_JACK_HEADSET;
+		if (anc_mic_found)
+			jack_type = SND_JACK_ANC_HEADPHONE;
 
 		/*
 		 * If Headphone was reported previously, this will
@@ -1008,6 +1010,9 @@ static void wcd_mbhc_swch_irq_handler(struct wcd_mbhc *mbhc)
 			mbhc->is_extn_cable = false;
 			jack_type = SND_JACK_LINEOUT;
 			break;
+		case MBHC_PLUG_TYPE_ANC_HEADPHONE:
+			jack_type = SND_JACK_ANC_HEADPHONE;
+			break;
 		default:
 			pr_info("%s: Invalid current plug: %d\n",
 				__func__, mbhc->current_plug);
@@ -1082,8 +1087,6 @@ int wcd_mbhc_get_button_mask(struct wcd_mbhc *mbhc)
 	int btn;
 
 	btn = mbhc->mbhc_cb->map_btn_code_to_num(mbhc->component);
-
-	pr_info("%s: button %d\n", __func__, btn);
 
 	switch (btn) {
 	case 0:
