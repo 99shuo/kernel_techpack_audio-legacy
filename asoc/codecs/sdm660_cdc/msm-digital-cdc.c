@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2015-2017, 2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 #include <linux/module.h>
 #include <linux/init.h>
@@ -1142,10 +1141,8 @@ static int msm_dig_cdc_event_notify(struct notifier_block *block,
 		break;
 	case DIG_CDC_EVENT_SSR_UP:
 		regcache_cache_only(msm_dig_cdc->regmap, false);
-		if ((msm_dig_cdc->regmap) != NULL && (msm_dig_cdc->regmap->lock) != NULL &&
-			(msm_dig_cdc->regmap->lock_arg) != NULL) {
-			regcache_mark_dirty(msm_dig_cdc->regmap);
-		}
+		regcache_mark_dirty(msm_dig_cdc->regmap);
+
 		mutex_lock(&pdata->cdc_int_mclk0_mutex);
 		pdata->digital_cdc_core_clk.enable = 1;
 		ret = afe_set_lpass_clock_v2(
@@ -1159,10 +1156,7 @@ static int msm_dig_cdc_event_notify(struct notifier_block *block,
 		}
 		mutex_unlock(&pdata->cdc_int_mclk0_mutex);
 
-		if ((msm_dig_cdc->regmap) != NULL && (msm_dig_cdc->regmap->lock) != NULL &&
-                        (msm_dig_cdc->regmap->lock_arg) != NULL) {
-			regcache_sync(msm_dig_cdc->regmap);
-		}
+		regcache_sync(msm_dig_cdc->regmap);
 
 		mutex_lock(&pdata->cdc_int_mclk0_mutex);
 		pdata->digital_cdc_core_clk.enable = 0;
@@ -1877,47 +1871,47 @@ static const struct soc_enum cf_decsva_enum =
 	SOC_ENUM_SINGLE(MSM89XX_CDC_CORE_TX5_MUX_CTL, 4, 3, cf_text);
 
 static const struct snd_kcontrol_new msm_dig_snd_controls[] = {
-	SOC_SINGLE_S8_TLV("DEC1 Volume",
+	SOC_SINGLE_SX_TLV("DEC1 Volume",
 		MSM89XX_CDC_CORE_TX1_VOL_CTL_GAIN,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC2 Volume",
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("DEC2 Volume",
 		  MSM89XX_CDC_CORE_TX2_VOL_CTL_GAIN,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC3 Volume",
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("DEC3 Volume",
 		  MSM89XX_CDC_CORE_TX3_VOL_CTL_GAIN,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC4 Volume",
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("DEC4 Volume",
 		  MSM89XX_CDC_CORE_TX4_VOL_CTL_GAIN,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("DEC5 Volume",
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("DEC5 Volume",
 		  MSM89XX_CDC_CORE_TX5_VOL_CTL_GAIN,
-		-84, 40, digital_gain),
+		0, -84, 40, digital_gain),
 
-	SOC_SINGLE_S8_TLV("IIR1 INP1 Volume",
+	SOC_SINGLE_SX_TLV("IIR1 INP1 Volume",
 			  MSM89XX_CDC_CORE_IIR1_GAIN_B1_CTL,
-			 -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("IIR1 INP2 Volume",
+			0,  -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("IIR1 INP2 Volume",
 			  MSM89XX_CDC_CORE_IIR1_GAIN_B2_CTL,
-			 -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("IIR1 INP3 Volume",
+			0,  -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("IIR1 INP3 Volume",
 			  MSM89XX_CDC_CORE_IIR1_GAIN_B3_CTL,
-			 -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("IIR1 INP4 Volume",
+			0,  -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("IIR1 INP4 Volume",
 			  MSM89XX_CDC_CORE_IIR1_GAIN_B4_CTL,
-			  -84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("IIR2 INP1 Volume",
+			0,  -84,	40, digital_gain),
+	SOC_SINGLE_SX_TLV("IIR2 INP1 Volume",
 			  MSM89XX_CDC_CORE_IIR2_GAIN_B1_CTL,
-			 -84, 40, digital_gain),
+			0,  -84, 40, digital_gain),
 
-	SOC_SINGLE_S8_TLV("RX1 Digital Volume",
+	SOC_SINGLE_SX_TLV("RX1 Digital Volume",
 		MSM89XX_CDC_CORE_RX1_VOL_CTL_B2_CTL,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX2 Digital Volume",
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX2 Digital Volume",
 		MSM89XX_CDC_CORE_RX2_VOL_CTL_B2_CTL,
-		-84, 40, digital_gain),
-	SOC_SINGLE_S8_TLV("RX3 Digital Volume",
+		0, -84, 40, digital_gain),
+	SOC_SINGLE_SX_TLV("RX3 Digital Volume",
 		MSM89XX_CDC_CORE_RX3_VOL_CTL_B2_CTL,
-		-84, 40, digital_gain),
+		0, -84, 40, digital_gain),
 
 	SOC_SINGLE_EXT("IIR1 Enable Band1", IIR1, BAND1, 1, 0,
 		msm_dig_cdc_get_iir_enable_audio_mixer,
