@@ -62,6 +62,7 @@ struct msm_asoc_mach_data {
 	int ext_pa;
 	int us_euro_gpio;
 	int spk_ext_pa_gpio;
+#ifdef CONFIG_MACH_XIAOMI_YSL
 	int spk_ext_pa_gpio_lc;
 	int spk_hs_switch_gpio;
 	struct delayed_work pa_gpio_work;
@@ -69,6 +70,7 @@ struct msm_asoc_mach_data {
 	struct delayed_work hs_gpio_work;
 	unsigned char pa_is_on;
 	unsigned char hs_is_on;
+#endif
 	int mclk_freq;
 	bool native_clk_set;
 	int lb_mode;
